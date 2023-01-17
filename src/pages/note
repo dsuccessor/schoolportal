@@ -1,0 +1,168 @@
+// Course Schema
+
+courses:{
+    courseTitle: String,
+    courseCode: String,
+    courseUnit: Number,
+    session: String,
+    semester: String,
+    faculty: String,
+    department: String
+    }
+
+
+
+
+semesters:{
+first-semester:{
+faculties:{
+science:{},
+engineering:{},
+technology:{},
+agriculture:{
+departments:{
+agric:{
+
+},
+agric-econs:2,
+agronomy:3,
+animal-science:4,
+crop-science:5
+}
+},
+arts:{},
+managements:{},
+education:{}
+}
+},
+second-semester:{}
+}
+
+{
+    "courseTitle" : "",
+    "courseCode": "", 
+    "courseUnit": "", 
+    "session": "", 
+    "semester": "",
+    "faculty": "", 
+    "depatment": ""
+    }
+
+
+   
+    You can declare an array as below
+
+    trk : [{
+        lat : String,
+        lng : String
+    }]
+    but it will set [] (empty array) as the default value.
+    
+    If you don't want this default value then to overwrite this default, you need to set the default value to undefined as below
+    
+    trk: {
+        type: [{
+            lat : String,
+            lng : String
+        }],
+        default: undefined
+    }
+   
+
+    var ContractSchema = new Schema(
+        {
+            address: {type: String, required: true, max: 100},  //contract address
+            // book_id: {type: String, required: true, max: 100},  //book id in the book collection
+            book: { type: Schema.ObjectId, ref: 'clc_books', required: true }, // Reference to the associated book.
+            num_of_days: {type: Number, required: true, min: 1},
+            borrower_addr: {type: String, required: true, max: 100},
+            // status: {type: String, enum: ['available', 'Created', 'Locked', 'Inactive'], default:'Created'},
+    
+            blk_data: [{
+                tx_addr: {type: String, max: 100}, // to do: change to a list
+                block_number: {type: String, max: 100}, // to do: change to a list
+            }]
+        }
+    );
+
+    var contract = new Contract(
+        {
+            address: req.body.new_contract_addr,
+            book: req.body.book_id,
+            num_of_days: req.body.num_of_days,
+            borrower_addr: req.body.req_addr
+
+        });
+
+    var blk_data = {
+            tx_addr: req.body.tx_addr,
+            block_number: req.body.block_number
+        };
+    contract.blk_data.push(blk_data);
+
+    // Create a contract object with escaped/trimmed data
+    var contract_fields = {
+        $push: {
+            blk_data: {
+                tx_addr: req.body.tx_addr,
+                block_number: req.body.block_number
+            }
+        }
+    };
+
+    async.parallel({
+        //call the function get book model
+        book: function(callback) {
+            Book.findByIdAndUpdate(req.body.book_id, book_fields, {}).exec(callback);
+        },
+        contract: function(callback) {
+            Contract.findByIdAndUpdate(req.body.contract_id, contract_fields, {}).exec(callback);
+        },
+    }, function(error, results) {
+        if (error) {
+            res.status(400).send({ errors: errors.array() });
+            return;
+        }
+
+        if ((results.book.isNew) || (results.contract.isNew)) {
+            res.status(400).send({ errors: errors.array() });
+            return;
+        }
+
+       // DB MANUAL REFERENCING
+
+original_id = ObjectId()
+db.places.insertOne({
+    "_id": original_id,
+    "name": "Broadway Center",
+    "url": "bc.example.net"
+})
+db.people.insertOne({
+    "name": "Erin",
+    "places_id": original_id,
+    "url":  "bc.example.net/Erin"
+})
+
+
+// DB AUTO REFERENCING
+
+{
+    "_id" : ObjectId("5126bbf64aed4daf9e2ab771"),
+    // .. application fields
+    "creator" : {
+                    "$ref" : "creators",
+                    "$id" : ObjectId("5126bc054aed4daf9e2ab772"),
+                    "$db" : "users",
+                    "extraField" : "anything"
+                 }
+  }
+
+
+  courseForm: {
+    type: Array,
+    defaultValue: undefined,
+    lowercase: true
+}
+
+string myString = "123,456,789";
+string[] parts = myString.Split(',');

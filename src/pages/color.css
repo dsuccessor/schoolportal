@@ -1,0 +1,79 @@
+.deepBlue {
+    background-color: rgb(24, 92, 165) !important;
+    color: #fff !important;
+}
+
+.lightBlue {
+    background-color: rgb(230, 234, 247) !important;
+    color: rgb(24, 92, 165) !important;
+}
+.otherBlue {
+    background-color: rgb(148, 170, 244) !important;
+}
+
+.deepBlue-border {
+     border-color: rgb(24, 92, 165) !important;
+}
+
+.lightBlue-border {
+    border-color: rgb(230, 234, 247) !important;
+}
+
+.otherBlue-border {
+    border-color: rgb(148, 170, 244) !important;
+}
+
+
+
+.bg-card {
+    background-image: url('../images/card1.png');
+    
+}
+.bg-card-1 {
+    background-image: url('../images/card-1.jpeg') !important;
+    
+}
+.bg-card-2 {
+    background-image: url('../images/card3.png');
+}
+.bg-card-3 {
+    background-image: url('../images/cheque-guarantee-card-g4adacee10_640.png');
+    
+}
+.bg-card-4 {
+    background-image: url('../images/cheque-guarantee-card-g4aebc4b40_640.png');
+    
+}
+.bg-card-5 {
+    background-image: url('../images/card5.png')!important;
+    
+}
+.bg-card-6 {
+    background-image: url('../images/card-6.png') !important;
+    
+}
+.bg-card-blue {
+    background-image: url('../images/card-blue.jpg') !important;
+    
+}
+.bg-card-green {
+    background-image: url('../images/card-green.jpg') !important;
+    
+}
+.bg-card-brown {
+    background-image: url('../images/card-brown.jpg') !important;
+    
+}
+.bg-card-yellow {
+    background-image: url('../images/card-yellow-1.jpg') !important;
+    
+}
+.bg-card-yellow-1 {
+    background-image: url('../images/card-yellow-2.jpg') !important;
+}
+.bg-card-plain {
+    background-image: url('../images/card-plain.jpeg') !important;
+}
+.bg-card-plaint {
+    background-image: url('../images/card-plaint.png') !important;
+}

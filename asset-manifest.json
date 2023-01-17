@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/schoolportal/static/css/main.cc39d514.css",
+    "main.js": "/schoolportal/static/js/main.1689b023.js",
+    "static/media/kenny.jpg": "/schoolportal/static/media/kenny.3c63364837c2cc9d7c53.jpg",
+    "static/media/card3.png": "/schoolportal/static/media/card3.30957bc02142ee698af7.png",
+    "static/media/card-plaint.png": "/schoolportal/static/media/card-plaint.3ae2ce8f17ebc5c317e6.png",
+    "static/media/card5.png": "/schoolportal/static/media/card5.a90b01349b838b7c2736.png",
+    "static/media/card1.png": "/schoolportal/static/media/card1.41c540dfd30083aa6bb9.png",
+    "static/media/access.jpeg": "/schoolportal/static/media/access.60f618bfc90fa3ac5a86.jpeg",
+    "static/media/card-6.png": "/schoolportal/static/media/card-6.e8933da61f87141f5d69.png",
+    "static/media/card-yellow-2.jpg": "/schoolportal/static/media/card-yellow-2.7d0e75a1e8115ea31c43.jpg",
+    "static/media/card-yellow-1.jpg": "/schoolportal/static/media/card-yellow-1.dd89dbf6c228f706f806.jpg",
+    "static/media/card-green.jpg": "/schoolportal/static/media/card-green.0d0302ddbff5eb47aaf8.jpg",
+    "static/media/card-blue.jpg": "/schoolportal/static/media/card-blue.ed5ffafbf6ea70c0efdd.jpg",
+    "static/media/kcLogo.png": "/schoolportal/static/media/kcLogo.ce689929ab0c9ffcee77.png",
+    "static/media/card-plain.jpeg": "/schoolportal/static/media/card-plain.63b86befd2005bb581e7.jpeg",
+    "static/media/cheque-guarantee-card-g4adacee10_640.png": "/schoolportal/static/media/cheque-guarantee-card-g4adacee10_640.2e7dba3754cd670ac4dc.png",
+    "static/media/cheque-guarantee-card-g4aebc4b40_640.png": "/schoolportal/static/media/cheque-guarantee-card-g4aebc4b40_640.ef97a42c8f8ae0c5767d.png",
+    "index.html": "/schoolportal/index.html",
+    "main.cc39d514.css.map": "/schoolportal/static/css/main.cc39d514.css.map",
+    "main.1689b023.js.map": "/schoolportal/static/js/main.1689b023.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.cc39d514.css",
+    "static/js/main.1689b023.js"
+  ]
+}

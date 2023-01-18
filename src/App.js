@@ -20,7 +20,7 @@ import './pages/color.css'
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="schoolportal">
       <div>
         <Routes>
           {/* <Route path="/" element={<ProtectedRoute> <Layout/></ProtectedRoute>}/> */}

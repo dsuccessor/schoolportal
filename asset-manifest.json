@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/schoolportal/static/css/main.cc39d514.css",
-    "main.js": "/schoolportal/static/js/main.1689b023.js",
+    "main.js": "/schoolportal/static/js/main.bc56bb6f.js",
     "static/media/kenny.jpg": "/schoolportal/static/media/kenny.3c63364837c2cc9d7c53.jpg",
     "static/media/card3.png": "/schoolportal/static/media/card3.30957bc02142ee698af7.png",
     "static/media/card-plaint.png": "/schoolportal/static/media/card-plaint.3ae2ce8f17ebc5c317e6.png",
@@ -19,10 +19,10 @@
     "static/media/cheque-guarantee-card-g4aebc4b40_640.png": "/schoolportal/static/media/cheque-guarantee-card-g4aebc4b40_640.ef97a42c8f8ae0c5767d.png",
     "index.html": "/schoolportal/index.html",
     "main.cc39d514.css.map": "/schoolportal/static/css/main.cc39d514.css.map",
-    "main.1689b023.js.map": "/schoolportal/static/js/main.1689b023.js.map"
+    "main.bc56bb6f.js.map": "/schoolportal/static/js/main.bc56bb6f.js.map"
   },
   "entrypoints": [
     "static/css/main.cc39d514.css",
-    "static/js/main.1689b023.js"
+    "static/js/main.bc56bb6f.js"
   ]
 }

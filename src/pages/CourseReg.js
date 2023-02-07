@@ -34,7 +34,7 @@ function CourseReg() {
     const userProfiles = async () => {
       await axios
         .get(
-          `http://localhost:3001/course/fetch/${activeUserProfile?.department}`,
+          `https://kaycad-v2.onrender.com/course/fetch/${activeUserProfile?.department}`,
         )
         .then((response) => {
           setProfiles(response.data.result)
@@ -47,7 +47,7 @@ function CourseReg() {
     const userCourseForm = async () => {
       await axios
         .get(
-          `http://localhost:3001/courseform/fetchAll/${activeUserProfile?.studentId}`,
+          `https://kaycad-v2.onrender.com/courseform/fetchAll/${activeUserProfile?.studentId}`,
         )
         .then((response) => {
           setCourseForm(response.data.result)
@@ -96,7 +96,10 @@ function CourseReg() {
     // console.log(loginUser)
 
     await axios
-      .post('http://localhost:3001/courseform/registercourse', loginUser)
+      .post(
+        'https://kaycad-v2.onrender.com/courseform/registercourse',
+        loginUser,
+      )
       .then((res) => {
         console.log(res.data.result)
         toast.success(res.data.msg)
@@ -249,7 +252,7 @@ function CourseReg() {
           {/* Nav Section */}
           <div className="row">
             <div className="bg-white d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-0 border-bottom">
-              <h1 className="h4 link-primary">Student Portal Dashboard</h1>
+              <h1 className="h4 link-primary">Course Registeration Page</h1>
               <div className="btn-toolbar mb-2 mb-md-0">
                 <div className="btn-group me-2">
                   <button

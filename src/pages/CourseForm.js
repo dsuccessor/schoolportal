@@ -22,7 +22,7 @@ function CourseForm() {
     const userCourseForm = async () => {
       await axios
         .get(
-          `http://localhost:3001/courseform/fetchAll/${activeUserProfile?.studentId}`,
+          `https://kaycad-v2.onrender.com/courseform/fetchAll/${activeUserProfile?.studentId}`,
         )
         .then((response) => {
           setCourseForm(response.data.result)

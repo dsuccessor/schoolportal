@@ -55,7 +55,7 @@ function PaymentNotification() {
     const fetchPayNotifyRecord = async () => {
       await axios
         .get(
-          `http://localhost:3001/paymentNotification/history/${activeUserProfile?.studentId}`,
+          `https://kaycad-v2.onrender.com/paymentNotification/history/${activeUserProfile?.studentId}`,
         )
         .then((response) => {
           setPayNotifyRecord(response?.data?.result)
@@ -112,7 +112,7 @@ function PaymentNotification() {
       }
       await axios
         .post(
-          'http://localhost:3001/paymentNotification/sendnotification',
+          'https://kaycad-v2.onrender.com/paymentNotification/sendnotification',
           formData,
           config,
         )

@@ -1,0 +1,112 @@
+import * as FileSaver from 'file-saver'
+import { useRef } from 'react'
+import XLSX from 'sheetjs-style'
+
+function ExcelExport({ excelData, fileName }) {
+  const checkClick = useRef()
+  console.log(excelData)
+
+  var result = excelData?.map((element, index) => {
+    var {
+      walletId,
+      paymentId,
+      amount,
+      txnType,
+      bankCredited,
+      narration,
+      senderAcct,
+      paymentType,
+      balanceBefore,
+      balanceAfter,
+      createdAt,
+      updatedAt,
+    } = element
+
+    var results = {}
+
+    results = {
+      ...results,
+      'Wallet ID': walletId,
+      'Payment Id': paymentId,
+      'Amount Paid': new Intl.NumberFormat().format(
+        parseFloat(amount?.$numberDecimal).toFixed(2),
+      ),
+      'Transaction Type': txnType,
+      'Bank Credited': bankCredited,
+      Narration: narration,
+      "Sender's Acct Name": senderAcct,
+      'Payment Type': paymentType,
+      'Balance Before': new Intl.NumberFormat().format(
+        parseFloat(balanceBefore?.$numberDecimal).toFixed(2),
+      ),
+      'Balance After': new Intl.NumberFormat().format(
+        parseFloat(balanceAfter?.$numberDecimal).toFixed(2),
+      ),
+      DateCredited: updatedAt.split('T')[0],
+      TimeCredited: updatedAt.split('T')[1].split('.')[0],
+    }
+
+    return results
+  })
+
+  const fileType =
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+  const fileExtension = '.xlsx'
+
+  const exportToExcel = async () => {
+    const ws = XLSX.utils.json_to_sheet(result)
+
+    //   ws['R1'].s = {
+    //     // set the style for target cell
+    //     font: {
+    //       name: 'Tahoma',
+    //       sz: 24,
+    //       bold: true,
+    //       color: { rgb: 'FFFFAA00' },
+    //     },
+    //   }
+
+    const wb = {
+      Sheets: { data: ws },
+      SheetNames: ['data'],
+    }
+
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+
+    const data = new Blob([excelBuffer], { type: fileType })
+
+    FileSaver.saveAs(data, fileName + fileExtension)
+
+    excelData = null
+    result = null
+    fileName = null
+
+    return {
+      excelData,
+      result,
+      fileName,
+    }
+  }
+
+  fileName = `Wallet history ${result[0]?.DateCredited}-${
+    result[result.length - 1]?.DateCredited
+  }`
+
+  return (
+    <>
+      <div className="visually-hidden">
+        <button
+          ref={checkClick}
+          type="button"
+          className="btn btn-sm deepBlue"
+          onClick={(e) => exportToExcel()}
+        >
+          Download
+        </button>
+      </div>
+      {excelData?.length > 0 && checkClick?.current?.click()}
+    </>
+  )
+}
+
+export default ExcelExport

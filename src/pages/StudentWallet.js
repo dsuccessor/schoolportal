@@ -28,7 +28,9 @@ function StudentWallet() {
   useEffect(() => {
     const fetchBalance = async () => {
       await axios
-        .get(`http://localhost:3001/wallet/getwalletbalance/${walletId}`)
+        .get(
+          `https://kaycad-v2.onrender.com/wallet/getwalletbalance/${walletId}`,
+        )
         .then((response) => {
           setWalletDetails(response.data.response[0])
           const myBalance = parseFloat(
@@ -40,7 +42,9 @@ function StudentWallet() {
         })
 
       await axios
-        .get(`http://localhost:3001/wallet/studentwallethistory/${walletId}`)
+        .get(
+          `https://kaycad-v2.onrender.com/wallet/studentwallethistory/${walletId}`,
+        )
         .then((response) => {
           setWalletHistory(response?.data?.result)
           // toast.success(response.data.msg)

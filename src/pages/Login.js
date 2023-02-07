@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useState } from 'react'
 import './signin.css'
 import axios from 'axios'
@@ -13,10 +13,44 @@ function Login() {
     password: '',
   })
 
+  const spinner = useRef()
+  const btnLoader = useRef()
+
   const navigate = useNavigate()
 
   const login = () => {
     setTimeout(() => navigate('/'), 1000)
+  }
+
+  const loader = () => {
+    return (
+      <>
+        <div ref={spinner} style={{ zIndex: 2 }} className="d-none">
+          <div
+            style={{
+              width: '10rem',
+              height: '10rem',
+              position: 'absolute',
+              bottom: 335,
+              right: 640,
+              zIndex: 2,
+            }}
+            className="d-flex justify-content-center text-success spinner-border opacity-100"
+            role="status"
+          ></div>
+          <span
+            style={{
+              position: 'absolute',
+              bottom: 400,
+              right: 665,
+            }}
+            className="text-bg-success text-white fw-bolder rounded py-1 px-2"
+          >
+            Processing...
+          </span>
+        </div>
+      </>
+    )
   }
 
   const handleOnChange = (e) => {
@@ -26,24 +60,30 @@ function Login() {
   }
 
   const handleOnSubmit = async (e) => {
+    spinner.current.className = 'd-flex'
+    btnLoader.current.className = 'spinner-border spinner-border-sm me-4'
     e.preventDefault()
     const { email, password } = loginUser
     if (email === '' || password === '') {
       console.log('Fields cannot be empty')
       toast.error('Fields cannot be empty')
+      spinner.current.className = 'd-none'
+      btnLoader.current.className = 'd-none'
     } else {
       await axios
-        .post('http://localhost:3001/Login', loginUser)
+        .post('https://kaycad-v2.onrender.com/Login', loginUser)
         .then((res) => {
+          console.log(res?.data)
+          toast.success(res?.data?.msg)
           const result = JSON.stringify(res.data)
           localStorage.setItem('loginSession', result)
-          console.log(res.data.msg)
-          toast.success(res.data.msg)
           navigate('/profile')
           login()
         })
         .catch((err) => {
           console.log(err?.response)
+          spinner.current.className = 'd-none'
+          btnLoader.current.className = 'd-none'
           toast.error(err?.response?.data?.msg)
         })
     }
@@ -51,6 +91,7 @@ function Login() {
 
   return (
     <div className="mybody text-center">
+      {loader()}
       <main className="form-signin w-100 m-auto">
         <form onSubmit={handleOnSubmit}>
           <img
@@ -86,8 +127,23 @@ function Login() {
             ></input>
             <label>Password</label>
           </div>
-          <button className="w-100 btn btn-lg btn-primary" type="submit">
+          <button
+            className="w-50 btn btn-sm btn-primary mx-2 fw-bolder"
+            type="submit"
+          >
+            <i
+              ref={btnLoader}
+              class="d-none spinner-border spinner-border-sm me-4"
+              role="status"
+              aria-hidden="true"
+            ></i>
             Sign in
+          </button>
+          <button
+            className="w-50 btn btn-sm btn-danger mx-2 fw-bolder my-2"
+            type="reset"
+          >
+            Clear
           </button>
         </form>
         <p className="mt-5 mb-3 text-muted">&copy; 2022</p>

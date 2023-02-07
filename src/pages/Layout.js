@@ -40,6 +40,11 @@ function Layout({ children }) {
       icon: <GiTakeMyMoney />,
     },
     {
+      title: 'Payent Advice',
+      path: '/PaymentAdvice',
+      icon: <GiTakeMyMoney />,
+    },
+    {
       title: 'Wallet',
       path: '/StudentWallet',
       icon: <TfiWallet />,
@@ -56,6 +61,11 @@ function Layout({ children }) {
       title: 'Admin Home',
       path: '/',
       icon: <FaHome />,
+    },
+    {
+      title: 'Academic Calendar',
+      path: '/academiccalendar',
+      icon: <GiBank />,
     },
     {
       title: 'Payment Confirmation',

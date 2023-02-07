@@ -24,7 +24,9 @@ function AdminPaymentApproval() {
   useEffect(() => {
     const fetchPayNotifyRecord = async () => {
       await axios
-        .get(`http://localhost:3001/paymentNotification/confirmationrequest`)
+        .get(
+          `https://kaycad-v2.onrender.com/paymentNotification/confirmationrequest`,
+        )
         .then((response) => {
           setPayNotifyRecord(response?.data?.response)
           // toast.success(response.data.msg)
@@ -65,7 +67,7 @@ function AdminPaymentApproval() {
       }
       await axios
         .put(
-          `http://localhost:3001/paymentNotification/confirmpayment/${paymentId}`,
+          `https://kaycad-v2.onrender.com/paymentNotification/confirmpayment/${paymentId}`,
           confirmData,
         )
         .then(async (res) => {
@@ -74,7 +76,9 @@ function AdminPaymentApproval() {
           const walletId = `900${studentId}`
 
           await axios
-            .get(`http://localhost:3001/wallet/getwalletbalance/${walletId}`)
+            .get(
+              `https://kaycad-v2.onrender.com/wallet/getwalletbalance/${walletId}`,
+            )
             .then(async (res) => {
               const response = res.data.response[0].walletBalance.$numberDecimal
 
@@ -84,16 +88,37 @@ function AdminPaymentApproval() {
 
               const newWalletBalance = walletBalance + newAmount
 
+              const currDate = new Date()
+              const myDay = currDate.getDay()
+              const myMonth = currDate.getMonth()
+              const myYear = currDate.getFullYear()
+              const myDate = `${myYear}${myMonth}${myDay}`
+              const myHour = currDate.getHours()
+              const myMinute = currDate.getMinutes()
+              const mySecond = currDate.getSeconds()
+              const myTime = `${myHour}${myMinute}${mySecond}`
+
+              const txnType = 'wallet funding'
+
+              const paymentRef = `${paymentId}${txnType.split(' ')[0]}${
+                txnType.split(' ')[1]
+              }${myDate}${myTime}`
+
               const creditWallet = {
                 walletId: walletId,
                 payment: _id,
+                amount: newAmount,
+                paymentRef: paymentRef,
                 paymentType: 'credit',
-                txnType: 'wallet funding',
+                txnType: txnType,
                 balanceBefore: walletBalance,
                 walletBalance: newWalletBalance,
               }
               await axios
-                .post(`http://localhost:3001/wallet/fundwallet`, creditWallet)
+                .post(
+                  `https://kaycad-v2.onrender.com/wallet/fundwallet`,
+                  creditWallet,
+                )
                 .then(async (result) => {
                   console.log(result)
                   toast.success(result.data.msg)
@@ -199,7 +224,7 @@ function AdminPaymentApproval() {
       }
       await axios
         .put(
-          `http://localhost:3001/paymentNotification/confirmpayment/${paymentId}`,
+          `https://kaycad-v2.onrender.com/paymentNotification/confirmpayment/${paymentId}`,
           declineData,
         )
         .then((res) => {

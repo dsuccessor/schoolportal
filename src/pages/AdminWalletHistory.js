@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Layout from './Layout'
 import { useLocation } from 'react-router-dom'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
-import access from '../images/access.jpeg'
 import './color.css'
 import { GrTransaction } from 'react-icons/gr'
 import { BiShow } from 'react-icons/bi'
@@ -14,13 +13,19 @@ import { IoCalendarNumber } from 'react-icons/io5'
 import { GiMoneyStack, GiWallet } from 'react-icons/gi'
 import { IoCalendarNumberSharp } from 'react-icons/io5'
 import { useDownloadExcel } from 'table-to-excel-react'
+import * as FileSaver from 'file-saver'
+import XLSX from 'sheetjs-style'
+import { TableToExcelReact } from 'table-to-excel-react'
 
 function AdminWalletHistory() {
   const location = useLocation()
   const [myElem, setMyElem] = useState()
   const [walletHistory, setWalletHistory] = useState()
+  const [downloadAuto, setDownloadAuto] = useState()
   const [balance, setBalance] = useState()
   const [formData, setFormData] = useState()
+
+  const downloadforauto = useRef()
 
   const activeUserProfile = JSON.parse(
     localStorage.getItem('activeUserProfile'),
@@ -29,7 +34,7 @@ function AdminWalletHistory() {
   useEffect(() => {
     const fetchWalletHistory = async () => {
       await axios
-        .get(`http://localhost:3001/wallet/aggregateBalance`)
+        .get(`https://kaycad-v2.onrender.com/wallet/aggregateBalance`)
         .then((response) => {
           setBalance(response?.data?.result)
         })
@@ -38,7 +43,7 @@ function AdminWalletHistory() {
         })
 
       await axios
-        .get(`http://localhost:3001/wallet/adminwallethistory`)
+        .get(`https://kaycad-v2.onrender.com/wallet/adminwallethistory`)
         .then((response) => {
           setWalletHistory(response?.data?.result)
         })
@@ -101,7 +106,10 @@ function AdminWalletHistory() {
       toast.error('All Fields cannot be empty')
     } else {
       await axios
-        .post(`http://localhost:3001/wallet/filterwallethistory`, formData)
+        .post(
+          `https://kaycad-v2.onrender.com/wallet/filterwallethistory`,
+          formData,
+        )
         .then((response) => {
           if (response?.data?.result?.length < 1) {
             setWalletHistory(response?.data?.result)
@@ -115,10 +123,305 @@ function AdminWalletHistory() {
           console.log(error?.response?.data)
           toast.error(error?.response?.data?.msg)
         })
+      //https://kaycad-v2.onrender.com/wallet/filterwallethistoryfordownload
     }
   }
+
+  const autoDownload = async (e) => {
+    e.preventDefault()
+    const {
+      walletId,
+      paymentId,
+      txnType,
+      paymentType,
+      fromDate,
+      toDate,
+    } = formData
+
+    const validateEntry = [
+      walletId,
+      paymentId,
+      txnType,
+      paymentType,
+      fromDate,
+      toDate,
+    ].every((entry) => entry === null || entry === undefined)
+
+    if (validateEntry) {
+      console.log('All Fields cannot be empty')
+      toast.error('All Fields cannot be empty')
+    } else {
+      await axios
+        .post(
+          `https://kaycad-v2.onrender.com/wallet/filterwallethistoryfordownload`,
+          formData,
+        )
+        .then((response) => {
+          if (response?.data?.result?.length < 1) {
+            setDownloadAuto(response?.data?.result)
+            toast.error('No record found')
+          } else {
+            var excelData = response?.data?.result
+
+            var result = excelData?.map((element, index) => {
+              var {
+                walletId,
+                feeId,
+                paymentId,
+                amount,
+                paymentRef,
+                txnType,
+                bankCredited,
+                narration,
+                senderAcct,
+                paymentType,
+                balanceBefore,
+                balanceAfter,
+                createdAt,
+                // updatedAt,
+              } = element
+
+              var results = {}
+
+              results = {
+                ...results,
+                'Wallet ID': walletId,
+                'Fee ID': feeId,
+                'Payment ID': paymentId,
+                'Amount Paid': new Intl.NumberFormat().format(
+                  parseFloat(amount?.$numberDecimal).toFixed(2),
+                ),
+                'Payment Reference': paymentRef,
+                'Transaction Type': txnType,
+                'Bank Credited': bankCredited,
+                Narration: narration,
+                "Sender's Acct Name": senderAcct,
+                'Payment Type': paymentType,
+                'Balance Before': new Intl.NumberFormat().format(
+                  parseFloat(balanceBefore?.$numberDecimal).toFixed(2),
+                ),
+                'Balance After': new Intl.NumberFormat().format(
+                  parseFloat(balanceAfter?.$numberDecimal).toFixed(2),
+                ),
+                DateCredited: createdAt.split('T')[0],
+                TimeCredited: createdAt.split('T')[1].split('.')[0],
+              }
+
+              return results
+            })
+
+            var fileName = `Wallet history ${result[0]?.DateCredited} to ${
+              result[result.length - 1]?.DateCredited
+            }`
+
+            const fileType =
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+            const fileExtension = '.xlsx'
+
+            const exportToExcel = async () => {
+              const ws = XLSX.utils.json_to_sheet(result)
+
+              //   ws['R1'].s = {
+              //     // set the style for target cell
+              //     font: {
+              //       name: 'Tahoma',
+              //       sz: 24,
+              //       bold: true,
+              //       color: { rgb: 'FFFFAA00' },
+              //     },
+              //   }
+
+              const wb = {
+                Sheets: { data: ws },
+                SheetNames: ['data'],
+              }
+
+              const excelBuffer = XLSX.write(wb, {
+                bookType: 'xlsx',
+                type: 'array',
+              })
+
+              const data = new Blob([excelBuffer], { type: fileType })
+
+              FileSaver.saveAs(data, fileName + fileExtension)
+            }
+
+            exportToExcel()
+            toast.success('Downloading Report')
+          }
+        })
+        .catch((error) => {
+          console.log(error?.response?.data)
+          toast.error(error?.response?.data?.msg)
+        })
+    }
+  }
+
+  const autoDownloads = async (e) => {
+    e.preventDefault()
+    const {
+      walletId,
+      paymentId,
+      txnType,
+      paymentType,
+      fromDate,
+      toDate,
+    } = formData
+
+    const validateEntry = [
+      walletId,
+      paymentId,
+      txnType,
+      paymentType,
+      fromDate,
+      toDate,
+    ].every((entry) => entry === null || entry === undefined)
+
+    if (validateEntry) {
+      console.log('All Fields cannot be empty')
+      toast.error('All Fields cannot be empty')
+    } else {
+      await axios
+        .post(
+          `https://kaycad-v2.onrender.com/wallet/filterwallethistoryfordownload`,
+          formData,
+        )
+        .then((response) => {
+          if (response?.data?.result?.length < 1) {
+            setDownloadAuto(response?.data?.result)
+            toast.error('No record found')
+          } else {
+            var results = response?.data?.result
+            return (
+              <>
+                <div className="table-responsive">
+                  <table
+                    id="whAutoTable"
+                    className="table table-striped table-sm"
+                  >
+                    <thead>
+                      <tr>
+                        <th className="p-2" scope="col">
+                          #
+                        </th>
+                        <th className="p-2" scope="col">
+                          Wallet ID
+                        </th>
+                        <th className="p-2" scope="col">
+                          Payment ID
+                        </th>
+                        <th className="p-2" scope="col">
+                          Fee ID
+                        </th>
+                        <th className="p-2" scope="col">
+                          Amount
+                        </th>
+                        <th className="p-2" scope="col">
+                          Payment Reference
+                        </th>
+                        <th className="p-2" scope="col">
+                          Txn Type
+                        </th>
+                        <th className="p-2" scope="col">
+                          Bank Credired
+                        </th>
+                        <th className="p-2" scope="col">
+                          Sender's Account Name
+                        </th>
+                        <th className="p-2" scope="col">
+                          Payment Type
+                        </th>
+                        <th className="p-2" scope="col">
+                          Balance Before
+                        </th>
+                        <th className="p-2" scope="col">
+                          Balance After
+                        </th>
+                        <th className="p-2" scope="col">
+                          DateTime
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {results?.map((course, index) => {
+                        index = index + 1
+                        let formatedBalanceBefore = new Intl.NumberFormat().format(
+                          parseFloat(
+                            course?.balanceBefore?.$numberDecimal,
+                          ).toFixed(2),
+                        )
+                        let formatedBalanceAfter = new Intl.NumberFormat().format(
+                          parseFloat(
+                            course?.walletBalance?.$numberDecimal,
+                          ).toFixed(2),
+                        )
+
+                        let formatedAmount = new Intl.NumberFormat().format(
+                          parseFloat(course?.amount?.$numberDecimal).toFixed(2),
+                        )
+                        return (
+                          <tr key={index}>
+                            <td className="p-2">{index}</td>
+                            <td className="p-2">{course?.walletId}</td>
+                            <td className="p-2">{course?.paymentId}</td>
+                            <td className="p-2">{course?.feeId}</td>
+                            <td className="p-2">{formatedAmount}</td>
+                            <td className="p-2">{course?.paymentRef}</td>
+                            <td className="p-2">{course?.txnType}</td>
+                            <td className="p-2">{course?.bankCredited}</td>
+                            <td className="p-2">{course?.narration}</td>
+                            <td className="p-2">{course?.senderAcct}</td>
+                            <td className="p-2">{course?.paymentType}</td>
+                            <td className="p-2">{formatedBalanceBefore} </td>
+                            <td className="p-2">{formatedBalanceAfter}</td>
+                            <td className="p-2">{`${
+                              course?.createdAt.split('T')[0]
+                            } ${
+                              course?.createdAt.split('T')[1].split('.')[0]
+                            }`}</td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                  <TableToExcelReact
+                    table="whAutoTable"
+                    fileName="Wallet funding Report"
+                    sheet="Report"
+                  >
+                    <button
+                      ref={downloadforauto}
+                      type="button"
+                      className="btn btn-sm deepBlue"
+                    >
+                      Download
+                    </button>
+                  </TableToExcelReact>
+
+                  {console.log(downloadforauto.current)}
+                </div>
+              </>
+            )
+          }
+        })
+        .catch((error) => {
+          console.log(error?.response?.data)
+          toast.error(error?.response?.data?.msg)
+        })
+    }
+  }
+
   // console.log(formData)
+  // console.log(downloadAuto)
   // console.log(balance)
+
+  // if (downloadAuto?.length > 0) {
+  //   return (
+  //     <>
+
+  //     </>
+  //   )
+  // }
 
   const showWalletHistory = () => {
     return (
@@ -128,7 +431,7 @@ function AdminWalletHistory() {
             <form>
               <input
                 type="email"
-                class="form-control form-control-sm"
+                className="form-control form-control-sm"
                 id="exampleInputEmail1"
                 placeholder="Make your search..."
               />
@@ -155,10 +458,10 @@ function AdminWalletHistory() {
                   #
                 </th>
                 <th className="p-2" scope="col">
-                  Wallet <br /> ID
+                  Wallet ID
                 </th>
                 <th className="p-2" scope="col">
-                  Payment <br /> ID
+                  Payment Ref
                 </th>
                 <th className="p-2" scope="col">
                   Amount
@@ -167,19 +470,19 @@ function AdminWalletHistory() {
                   Txn Type
                 </th>
                 <th className="p-2" scope="col">
-                  Payment <br /> Type
+                  Payment Type
                 </th>
                 <th className="p-2" scope="col">
-                  Balance <br /> Before
+                  Balance Before
                 </th>
                 <th className="p-2" scope="col">
-                  Balance <br /> After
+                  Balance After
                 </th>
                 <th className="p-2" scope="col">
                   DateTime
                 </th>
                 <th className="p-2" scope="col">
-                  View <br /> Details
+                  View Details
                 </th>
               </tr>
             </thead>
@@ -192,16 +495,22 @@ function AdminWalletHistory() {
                 let formatedBalanceAfter = new Intl.NumberFormat().format(
                   parseFloat(course?.walletBalance?.$numberDecimal).toFixed(2),
                 )
-                let formatedAmount = new Intl.NumberFormat().format(
+                {
+                  /* let formatedAmount = new Intl.NumberFormat().format(
                   parseFloat(course?.payment?.amount?.$numberDecimal).toFixed(
                     2,
                   ),
+                ) */
+                }
+                let formatedAmount = new Intl.NumberFormat().format(
+                  parseFloat(course?.amount?.$numberDecimal).toFixed(2),
                 )
                 return (
                   <tr key={index}>
                     <td className="p-2">{index}</td>
                     <td className="p-2">{course?.walletId}</td>
-                    <td className="p-2">{course?.payment?.paymentId}</td>
+                    {/* <td className="p-2">{course?.payment?.paymentId}</td> */}
+                    <td className="p-2">{course?.paymentRef}</td>
                     <td className="p-2">{formatedAmount}</td>
                     <td className="p-2">{course?.txnType}</td>
                     <td className="p-2">{course?.paymentType}</td>
@@ -342,7 +651,12 @@ function AdminWalletHistory() {
             >
               Filter
             </button>
-            <button type="button" className="btn btn-sm deepBlue">
+
+            <button
+              type="button"
+              className="btn btn-sm deepBlue"
+              onClick={autoDownload}
+            >
               Download
             </button>
           </div>
@@ -416,6 +730,7 @@ function AdminWalletHistory() {
                                 Total Cr:
                               </small>
                               <br />
+                              &#x20A6;
                               {balance?.length > 0 &&
                                 new Intl.NumberFormat().format(
                                   balance[0]?.aggBalance.$numberDecimal,
@@ -426,10 +741,13 @@ function AdminWalletHistory() {
                                 Total Dr:
                               </small>
                               <br />
+                              &#x20A6;
                               {balance?.length > 0 &&
-                                new Intl.NumberFormat().format(
-                                  balance[1]?.aggBalance.$numberDecimal,
-                                )}
+                              !isNaN(balance[1]?.aggBalance.$numberDecimal)
+                                ? new Intl.NumberFormat().format(
+                                    balance[1]?.aggBalance.$numberDecimal,
+                                  )
+                                : '0.00'}
                             </p>
                           </div>
                           <div className="card-footer bg-light px-2">
@@ -477,7 +795,7 @@ function AdminWalletHistory() {
                   <div className="my-3 px-3 py-3 bg-body rounded shadow-sm">
                     <div className="card bg-light">
                       <div className="card-body">
-                        <h5 className="card-title text-center lightBlue">
+                        <h5 className="card-title text-center lightBlue rounded py-1">
                           Wallet History
                         </h5>
 

@@ -16,11 +16,14 @@ import PaymentNotification from './pages/PaymentNotification'
 import StudentWallet from './pages/StudentWallet'
 import AdminWalletHistory from './pages/AdminWalletHistory'
 import AdminPaymentApproval from './pages/AdminPaymentApproval'
+import PaymentAdvice from './pages/PaymentAdvice'
+import AcademicCalendar from './pages/AcademicCalendar'
+
 import './pages/color.css'
 
 function App() {
   return (
-    <BrowserRouter basename="schoolportal">
+    <BrowserRouter>
       <div>
         <Routes>
           {/* <Route path="/" element={<ProtectedRoute> <Layout/></ProtectedRoute>}/> */}
@@ -29,6 +32,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="academiccalendar"
+            element={
+              <ProtectedRoute>
+                <AcademicCalendar />
               </ProtectedRoute>
             }
           />
@@ -53,6 +64,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="paymentadvice"
+            element={
+              <ProtectedRoute>
+                <PaymentAdvice />
               </ProtectedRoute>
             }
           />
